@@ -1,7 +1,7 @@
 # PDB analysis script
 
 import math
-from Bio.PDB import PDBParser, Structure
+from Bio.PDB import PDBParser, Structure, Model, Chain
 
 
 MOL_MASSES = {"O": 16, "C": 12, "N": 14, "S": 32}
@@ -69,10 +69,49 @@ def get_gyration_radius(struct: Structure) -> float:
     return math.sqrt(mr2_summ/sum(masses))
 
 
-# build structure
+def get_structure_slice_by_residues(struct: Structure, start: int, finish: int, domain_name: str) -> Structure:
+    """
+    Return new structure that contains new model (id=1), new chain (id=1) with residues from 'start' to 'finish' of
+    first chain input structure
+    :param struct: input structure to slice
+    :param start: start residue
+    :param finish: finish residues
+    :param domain_name: new structure name
+    :return: new structure
+    """
+    new_chain = Chain.Chain(1)
+    chain = list(struct.get_chains())[0]
+    for i in range(start, finish+1):
+        new_chain.add(chain[i])
+
+    model = Model.Model(1)
+    model.add(new_chain)
+    domain = Structure.Structure(domain_name)
+    domain.add(model)
+    return domain
+
+
+# build structures
 pdb_parser = PDBParser()
 structure = pdb_parser.get_structure("ts", "test.pdb")
+domain1 = get_structure_slice_by_residues(structure, 1, 114, "domain1")
+domain2 = get_structure_slice_by_residues(structure, 1, 114, "domain2")
 
-print(get_geometric_center(structure))
-print(get_mass_center(structure))
-print(get_gyration_radius(structure))
+# calculation parameters
+center_domain1 = get_geometric_center(domain1)
+center_domain2 = get_geometric_center(domain2)
+rg_domain1 = get_gyration_radius(domain1)
+rg_domain2 = get_gyration_radius(domain2)
+domain_dist = math.dist(center_domain1, center_domain2)
+
+# printing results
+print(" == Domain1 == ")
+print(f"mass center: {center_domain1}")
+print(f"gyration radius: {rg_domain1}\n")
+
+print(" == Domain2 == ")
+print(f"mass center: {center_domain2}")
+print(f"gyration radius: {rg_domain2}\n")
+
+print("== Domain distance ==")
+print(f"distance (A): {domain_dist}")
