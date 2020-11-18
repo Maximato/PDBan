@@ -1,7 +1,8 @@
-# PDB analysis script
+# PDB analysis (PDBA)
 
 import math
-from Bio.PDB import PDBParser, Structure, Model, Chain
+from Bio.PDB import Structure, Model, Chain
+from Bio.PDB.PDBExceptions import PDBException
 
 
 MOL_MASSES = {"O": 16, "C": 12, "N": 14, "S": 32}
@@ -69,18 +70,19 @@ def get_gyration_radius(struct: Structure) -> float:
     return math.sqrt(mr2_summ/sum(masses))
 
 
-def get_structure_slice_by_residues(struct: Structure, start: int, finish: int, domain_name: str) -> Structure:
+def get_structure_slice_by_residues(struct: Structure, chain_order: int, start: int, finish: int, domain_name: str) -> Structure:
     """
     Return new structure that contains new model (id=1), new chain (id=1) with residues from 'start' to 'finish' of
-    first chain input structure
+    specified chain of input structure
     :param struct: input structure to slice
+    :param chain_order: order of chain to extract residues
     :param start: start residue
     :param finish: finish residues
     :param domain_name: new structure name
     :return: new structure
     """
     new_chain = Chain.Chain(1)
-    chain = list(struct.get_chains())[0]
+    chain = list(struct.get_chains())[chain_order]
     for i in range(start, finish+1):
         new_chain.add(chain[i])
 
@@ -91,27 +93,37 @@ def get_structure_slice_by_residues(struct: Structure, start: int, finish: int, 
     return domain
 
 
-# build structures
-pdb_parser = PDBParser()
-structure = pdb_parser.get_structure("ts", "test.pdb")
-domain1 = get_structure_slice_by_residues(structure, 1, 114, "domain1")
-domain2 = get_structure_slice_by_residues(structure, 1, 114, "domain2")
+def get_synchronized_atoms(residues1: list, residues2: list) -> (list, list):
+    """
+    Synchronize atoms in residues1 and residues2.
+    Needs for superimposing structures (class Superimposer, set_atoms function)
+    :param residues1: list of residues
+    :param residues2: list of residues
+    :return: two lists of synchronized_atoms
+    """
 
-# calculation parameters
-center_domain1 = get_geometric_center(domain1)
-center_domain2 = get_geometric_center(domain2)
-rg_domain1 = get_gyration_radius(domain1)
-rg_domain2 = get_gyration_radius(domain2)
-domain_dist = math.dist(center_domain1, center_domain2)
+    # different size checking
+    if len(residues1) != len(residues2):
+        raise PDBException("Residues differ in size")
 
-# printing results
-print(" == Domain1 == ")
-print(f"mass center: {center_domain1}")
-print(f"gyration radius: {rg_domain1}\n")
+    atoms1, atoms2 = [], []
+    for r1, r2 in zip(residues1, residues2):
+        # different residues checking
+        if r1.get_resname() != r2.get_resname():
+            raise PDBException("Different residues")
 
-print(" == Domain2 == ")
-print(f"mass center: {center_domain2}")
-print(f"gyration radius: {rg_domain2}\n")
+        r1_atoms = r1.get_list()
+        r2_atoms = r2.get_list()
 
-print("== Domain distance ==")
-print(f"distance (A): {domain_dist}")
+        if len(r1_atoms) == len(r2_atoms):
+            atoms1.extend(r1_atoms)
+            atoms2.extend(r2_atoms)
+        else:
+            # atom synchronization
+            for a1 in r1_atoms:
+                for a2 in r2_atoms:
+                    if a1.get_name() == a2.get_name():
+                        atoms1.append(a1)
+                        atoms2.append(a2)
+                        break
+    return atoms1, atoms2
