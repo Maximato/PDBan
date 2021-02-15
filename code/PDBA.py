@@ -1,11 +1,11 @@
 # PDB analysis (PDBA)
 
 import math
-from Bio.PDB import Structure, Model, Chain
+from Bio.PDB import Structure, Model, Chain, Atom
 from Bio.PDB.PDBExceptions import PDBException
 
 
-MOL_MASSES = {"O": 16, "C": 12, "N": 14, "S": 32}
+MOL_MASSES = {"O": 16, "C": 12, "N": 14, "S": 32, "H": 1}
 
 
 def get_molecular_mass(struct: Structure) -> float:
@@ -16,7 +16,7 @@ def get_molecular_mass(struct: Structure) -> float:
     """
     mass = 0
     for atom in struct.get_atoms():
-        mass += MOL_MASSES[atom.get_name()[0]]
+        mass += _get_atom_mass(atom)
     return mass
 
 
@@ -45,7 +45,7 @@ def get_mass_center(struct: Structure) -> list:
     x_sum, y_sum, z_sum = 0, 0, 0
     mass = get_molecular_mass(struct)
     for atom in struct.get_atoms():
-        atom_mass = MOL_MASSES[atom.get_name()[0]]
+        atom_mass = _get_atom_mass(atom)
         x_sum += atom.get_coord()[0]*atom_mass
         y_sum += atom.get_coord()[1]*atom_mass
         z_sum += atom.get_coord()[2]*atom_mass
@@ -62,15 +62,15 @@ def get_gyration_radius(struct: Structure) -> float:
     mass_center = get_mass_center(struct)
 
     coords = [a.get_coord() for a in struct.get_atoms()]
-    masses = [MOL_MASSES[a.get_name()[0]] for a in struct.get_atoms()]
+    masses = [_get_atom_mass(a) for a in struct.get_atoms()]
 
-    mr2_summ = 0
+    mr2_sum = 0
     for r, m in zip(coords, masses):
-        mr2_summ += m*(math.dist(r, mass_center))**2
-    return math.sqrt(mr2_summ/sum(masses))
+        mr2_sum += m*(math.dist(r, mass_center))**2
+    return math.sqrt(mr2_sum/sum(masses))
 
 
-def get_structure_slice_by_residues(struct: Structure, chain_order: int, start: int, finish: int, domain_name: str) -> Structure:
+def get_structure_slice_by_residues(struct: Structure, domain_name: str, chain_order: int, start: int, finish: int) -> Structure:
     """
     Return new structure that contains new model (id=1), new chain (id=1) with residues from 'start' to 'finish' of
     specified chain of input structure
@@ -110,7 +110,7 @@ def get_synchronized_atoms(residues1: list, residues2: list) -> (list, list):
     for r1, r2 in zip(residues1, residues2):
         # different residues checking
         if r1.get_resname() != r2.get_resname():
-            raise PDBException("Different residues")
+            raise PDBException(f"Different residues: {r1} and {r2}")
 
         r1_atoms = r1.get_list()
         r2_atoms = r2.get_list()
@@ -127,3 +127,11 @@ def get_synchronized_atoms(residues1: list, residues2: list) -> (list, list):
                         atoms2.append(a2)
                         break
     return atoms1, atoms2
+
+
+def _get_atom_mass(atom: Atom):
+    i = 0
+    atom_name = atom.get_name()
+    while atom_name[i].isdigit():
+        i += 1
+    return MOL_MASSES[atom_name[i]]
