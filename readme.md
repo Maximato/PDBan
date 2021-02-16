@@ -16,13 +16,13 @@ Geometric center calculated as:
 
 Mass center calculated as:
 
-![formula](https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N}m_i r_i}{\sum_{i=1}^{N}m_i})
+![formula](https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N}m_ir_i}{\sum_{i=1}^{N}m_i})
 
 Gyration radius calculated as:
 
-![formula](https://render.githubusercontent.com/render/math?math=R_g=\sqrt{\frac{\sum_{i=1}^{N}m_i (r_i-r_c)^2}{\sum_{i=1}^{N}m_i}})
+![formula](https://render.githubusercontent.com/render/math?math=R_g=\sqrt{\frac{\sum_{i=1}^{N}m_i(r_i-r_c)^2}{\sum_{i=1}^{N}m_i}})
 
-Where: *N* - number of atoms, m_i - mass of *i* atom, r_i - coordinates of *i* atom.
+Where: ![formula](https://render.githubusercontent.com/render/math?math=N) - number of atoms, ![formula](https://render.githubusercontent.com/render/math?math=m_i) - mass of *i* atom, ![formula](https://render.githubusercontent.com/render/math?math=r_i) - coordinates of *i* atom.
 
 Distance calculated as the Euclidean distance between coordinates of mass centers of domains.
 
