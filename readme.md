@@ -10,10 +10,13 @@ Script `calc_params.py` is designed to calculate parameters of two specified dom
 - `d2_info` --- domain 2 info (turple: chain_number, start_residue, finish_residue)
 
 After running this script the geometric center, center of mass, gyration radius of domains, distance between domains will be calculated.
-Geometric center calculated as: $$r_c=\frac{\sum_{i=1}^{N}r_i}{N}$$
-Mass center calculated as: $$r_c=\frac{\sum_{i=1}^{N} m_i r_i}{\sum_{i=1}^{N} m_i}$$
-Gyration radius calculated as: $$R_g=\sqrt{\frac{\sum_{i=1}^{N} m_i (r_i-r_c)^2}{\sum_{i=1}^{N} m_i}}$$
-Where: $$N$$ - number of atoms, $$m_i$$ - mass of *i* atom, $$r_i$$ - coordinates of *i* atom.
+Geometric center calculated as: 
+$$r_c=\frac{\sum_{i=1}^{N}r_i}{N}$$
+Mass center calculated as: 
+$$r_c=\frac{\sum_{i=1}^{N} m_i r_i}{\sum_{i=1}^{N} m_i}$$
+Gyration radius calculated as: 
+$$R_g=\sqrt{\frac{\sum_{i=1}^{N} m_i (r_i-r_c)^2}{\sum_{i=1}^{N} m_i}}$$
+Where: $N$ - number of atoms, $m_i$ - mass of *i* atom, $r_i$ - coordinates of *i* atom.
 
 Distance calculated as the Euclidean distance between coordinates of mass centers of domains.
 
