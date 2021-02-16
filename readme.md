@@ -11,11 +11,11 @@ Script `calc_params.py` is designed to calculate parameters of two specified dom
 
 After running this script the geometric center, center of mass, gyration radius of domains, distance between domains will be calculated.
 Geometric center calculated as:
-<img src="https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N}r_i}{N}>
+![formula](https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N}r_i}{N})
 Mass center calculated as:
-<img src="https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N} m_i r_i}{\sum_{i=1}^{N} m_i}>
+![formula](https://render.githubusercontent.com/render/math?math=r_c=\frac{\sum_{i=1}^{N} m_i r_i}{\sum_{i=1}^{N} m_i})
 Gyration radius calculated as:
-<img src="https://render.githubusercontent.com/render/math?math=R_g=\sqrt{\frac{\sum_{i=1}^{N} m_i (r_i-r_c)^2}{\sum_{i=1}^{N} m_i}}>
+![formula](https://render.githubusercontent.com/render/math?math=R_g=\sqrt{\frac{\sum_{i=1}^{N} m_i (r_i-r_c)^2}{\sum_{i=1}^{N} m_i}})
 Where: *N* - number of atoms, m_i - mass of *i* atom, r_i - coordinates of *i* atom.
 
 Distance calculated as the Euclidean distance between coordinates of mass centers of domains.
