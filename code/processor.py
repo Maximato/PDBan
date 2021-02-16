@@ -27,11 +27,11 @@ def calc_domains_params(id: str, pdb_filename: str, d1_info: tuple, d2_info: tup
 
     # printing results
     print(" == Domain1 == ")
-    print(f"mass center: {center_domain1}")
+    print(f"geometric center: {center_domain1}")
     print(f"gyration radius: {rg_domain1}\n")
 
     print(" == Domain2 == ")
-    print(f"mass center: {center_domain2}")
+    print(f"geometric center: {center_domain2}")
     print(f"gyration radius: {rg_domain2}\n")
 
     print("== Domain distance ==")
@@ -40,10 +40,8 @@ def calc_domains_params(id: str, pdb_filename: str, d1_info: tuple, d2_info: tup
 
 def compare_domains(s1_id: str, s1_filename: str, ds1_info: tuple, s2_id: str, s2_filename: str, ds2_info: tuple):
     """
-    Extract nanobody (2Rs15d is real structure of VHH needed for analysis)
-    from crystal structure of a HER2-Nb complex (5my6)
-    and compare it with another structures
-    Compare two PDB structures by calculating their gyration radius and RMSD
+    Compare two PDB structures by calculating their gyration radius
+    and RMSD (root-mean-square deviation of atomic positions).
     PDB structures should be equal primary protein structures: equal size, equal sequences
     :param s1_id: structure 1 id
     :param s1_filename: filename to PDB structure 1

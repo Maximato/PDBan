@@ -20,7 +20,7 @@ def get_molecular_mass(struct: Structure) -> float:
     return mass
 
 
-def get_geometric_center(struct: Structure) -> list:
+def get_geometric_center(struct: Structure) -> tuple:
     """
     Calculate center of protein structure by arithmetic mean of all atoms coordinates
     :param struct: structure of protein
@@ -33,10 +33,10 @@ def get_geometric_center(struct: Structure) -> list:
         x_sum += atom.get_coord()[0]
         y_sum += atom.get_coord()[1]
         z_sum += atom.get_coord()[2]
-    return [x_sum/n, y_sum/n, z_sum/n]
+    return x_sum/n, y_sum/n, z_sum/n
 
 
-def get_mass_center(struct: Structure) -> list:
+def get_mass_center(struct: Structure) -> tuple:
     """
     Calculate mass center of protein structure
     :param struct: structure of protein
@@ -49,7 +49,7 @@ def get_mass_center(struct: Structure) -> list:
         x_sum += atom.get_coord()[0]*atom_mass
         y_sum += atom.get_coord()[1]*atom_mass
         z_sum += atom.get_coord()[2]*atom_mass
-    return [x_sum/mass, y_sum/mass, z_sum/mass]
+    return x_sum/mass, y_sum/mass, z_sum/mass
 
 
 def get_gyration_radius(struct: Structure) -> float:
@@ -70,10 +70,11 @@ def get_gyration_radius(struct: Structure) -> float:
     return math.sqrt(mr2_sum/sum(masses))
 
 
-def get_structure_slice_by_residues(struct: Structure, domain_name: str, chain_order: int, start: int, finish: int) -> Structure:
+def get_structure_slice_by_residues(struct: Structure, domain_name: str, chain_order: int, start: int,
+                                    finish: int) -> Structure:
     """
-    Return new structure that contains new model (id=1), new chain (id=1) with residues from 'start' to 'finish' of
-    specified chain of input structure
+    Return new structure that contains new model (id=1), new chain (id=1) with residues
+    from 'start' to 'finish' of specified chain of input structure
     :param struct: input structure to slice
     :param chain_order: order of chain to extract residues
     :param start: start residue
